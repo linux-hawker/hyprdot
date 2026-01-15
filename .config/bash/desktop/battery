@@ -1,0 +1,81 @@
+#!/bin/bash
+
+# Define the path to the battery information
+# BAT0 is standard, adjust if needed (e.g., BAT1)
+
+function raviza_check_battery() {
+
+    sysbat_time=600
+
+    local sysbat_path0="/sys/class/power_supply/BAT0"
+    local sysbat_path1="/sys/class/power_supply/BAT1"
+    
+
+    if [[ ! -d "$sysbat_path0" ]]&&[[ ! -d "$sysbat_path1" ]]; then
+        return
+    fi
+
+    if [[ -d "$sysbat_path0" ]]; then
+        local sysbat="$sysbat_path0"
+    fi
+
+    if [[ -d "$sysbat_path1" ]]; then
+        local sysbat="$sysbat_path1"
+    fi
+
+
+    # Read battery capacity and status directly from system files
+    batcaps=$(cat "$sysbat/capacity")
+    batstat=$(cat "$sysbat/status")
+
+    # Optional: Add a simple notification for low battery when discharging
+    if [[ "$batstat" == "Discharging" && "$batcaps" -le 10 ]]; then
+	send_notife "Low Battery Warning" "Remaining Capacity: $batcaps%"
+        sysbat_time=60
+	return
+    fi
+
+
+    if [[ "$batstat" == "Discharging" && "$batcaps" -le 20 ]]; then
+        send_notife "Low Battery Warning" "Remaining Capacity: $batcaps%"
+        sysbat_time=120
+	return
+    fi
+    
+    if [[ "$batstat" == "Discharging" && "$batcaps" -le 30 ]]; then
+        send_notife "Low Battery Warning" "Remaining Capacity: $batcaps%"
+        sysbat_time=240
+	return
+    fi
+    
+
+    if [[ "$batstat" == "Discharging" && "$batcaps" -le 40 ]]; then
+        send_notife "Low Battery Warning" "Remaining Capacity: $batcaps%"
+        sysbat_time=300
+	return
+    fi
+
+    if [[ "$batstat" == "Charging" && "$batcaps" -ge 95 ]]; then
+        send_notife "Battery Full" "Unplug Power Resource. Remaining Capacity: $batcaps%"
+        sysbat_time=120
+	return
+    fi
+
+    if [[ "$batstat" == "Full" && "$batcaps" -ge 100 ]]; then
+        send_notife "Battery Full" "Unplug Power Resource. Remaining Capacity: $batcaps%"
+        sysbat_time=60
+	return
+    fi
+}
+
+
+function raviza_timer_battery() {
+    
+    while true; do
+        raviza_check_battery
+        echo $sysbat_time
+        sleep "$sysbat_time" # Sleep for a spesific time
+    done
+}
+
+raviza_timer_battery &
