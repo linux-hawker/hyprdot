@@ -1,0 +1,16 @@
+#!/bin/env bash
+
+
+function raviza_monitor() {
+
+  local desktop="$HOME/.config/bash/desktop"
+
+  test -f $desktop/battery && . $desktop/battery 
+}
+
+
+function raviza_daemon() {
+  raviza_monitor
+}
+
+raviza_daemon

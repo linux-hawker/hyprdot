@@ -1,0 +1,1 @@
+return {recents={[1]="/home/raviza/.config"}, window={[1]=780,[2]=816,[3]=0,[4]=0,["n"]=4}, window_mode="maximized", previous_find={[3]="swap-icon-label",[1]="margin-top",[2]="border-radius: 0px 7px 7px 0px;",[4]="sway"}, previous_replace={}}
