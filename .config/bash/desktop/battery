@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 # Define the path to the battery information
 # BAT0 is standard, adjust if needed (e.g., BAT1)
